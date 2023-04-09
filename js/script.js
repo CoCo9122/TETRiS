@@ -363,6 +363,7 @@ function keyDown(e){
     if(e.key=='ArrowLeft'){nowTetro.superRatationSystem(-1);}
 
     if((e.key=='ArrowDown' || e.key==' ') && trans){translation();afterX=4;afterY=1;}
+    if(e.key=='Escape'){pauseBtn()}
 
     if(judgeMove(afterTetro, afterX, afterY)){
         if (afterY>now_y){
@@ -384,11 +385,29 @@ function draw() {
     nowTetro.display(can, now_x, now_y);
     nowTetro.ghost(can, now_x, now_y);
     //console.log(now_y, lower_y);
+    if(gamecode){
+        alert('GameOver')
+        gamecode=false
+        startGame()
+    }
     if(now_y==lower_y){
         lockDown(hardDrop=drop);
         if (countStart){
             timeMove = performance.now();
             countStart = false;
+            gameOver(nowTetro.tetro)
+        }
+    }
+}
+
+function gameOver(tetro){
+    for (let i=0; i<4; i++) {
+        let moveX = tetro[2*i]+now_x, moveY = tetro[2*i+1]+now_y;
+        if (field[moveY][moveX]!=BASECOLOR){
+            fieldDisplay();
+            nowTetro.display(can, now_x, now_y);
+            nowTetro.ghost(can, now_x, now_y);
+            gamecode=true
         }
     }
 }
@@ -504,6 +523,7 @@ function startGame(){
         holdFieldDisplay();
         fieldSet();
         fieldDisplay();
+        document.getElementById('pauseDivId').style.visibility = 'hidden'
     }
     
 }
@@ -585,6 +605,8 @@ let dropFPS = 0;
 
 let pause = true;
 let fieldData;
+
+let gamecode = false
 
 
 //メインのCANVAS
